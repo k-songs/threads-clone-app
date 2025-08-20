@@ -8,6 +8,34 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
 
+// Mirage.js Mock API 서버 (개발 환경에서만)
+if (__DEV__) {
+  const { createServer, Response } = require('miragejs');
+  
+  createServer({
+    routes() {
+      this.post("/login", (schema: any, request: any) => {
+        const { username, password } = JSON.parse(request.requestBody);
+        
+        if (username === "zerocho" && password === "1234") {
+          return {
+            accessToken: "access-token",
+            refreshToken: "refresh-token",
+            user: {
+              id: "zerohch0",
+              name: "ZeroCho",
+              description: "🐢 lover, programmer, youtuber",
+              profileImageUrl: "https://avatars.githubusercontent.com/u/885857?v=4",
+            },
+          };
+        } else {
+          return new Response(401, {}, { message: "Invalid credentials" });
+        }
+      });
+    },
+  });
+}
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
